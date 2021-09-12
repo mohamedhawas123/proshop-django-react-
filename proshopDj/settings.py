@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     "corsheaders",
+    'rest_framework_simplejwt',
+
 ]
 
 MIDDLEWARE = [
@@ -146,3 +148,19 @@ CORE_ORIGINS_WHITELIST = (
 )
 
 
+REST_FRAMEWORK = {
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+    
+}
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME' :timedelta(minutes=5555) ,
+    'REFRESH_TOKEN_LIFETIME':timedelta(days=555)
+}
