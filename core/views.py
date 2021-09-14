@@ -5,7 +5,7 @@ from .products import products
 from django.http import JsonResponse, response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import ProductListSerializers, UserSerializers
+from .serializers import ProductListSerializers, UserSerializers, UserSerializerWithToken
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .models import Product
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -27,8 +27,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         # Add custom claims
-        data['username'] = self.user.username
-        data['email'] = self.user.email
+        # data['username'] = self.user.username
+        # data['email'] = self.user.email
+
+        serializer = UserSerializerWithToken(self.user).data
+        for key, value in serializer.items():
+            data[key] = value
+
         
     
 
