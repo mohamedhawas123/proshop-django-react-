@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     
 )
-from .views import MyTokenObtainPairView, getUserProfile
+from .views import MyTokenObtainPairView, getUserProfile, updateUserProfile
 
 
 
@@ -15,6 +15,7 @@ urlpatterns = [
     # path('<pk>', get_product, name="product" )
     path('api/users/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path("users/profile", getUserProfile, name="profile"),
+    path("users/updateProfile", updateUserProfile, name="update_profile"),
     path('users', getUsers, name="get_users"),
     path("users/register", registerUser, name="register"),
     path("",ProductList.as_view(), name="productList" ),

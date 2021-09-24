@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .products import products
 from django.http import JsonResponse, response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from .serializers import ProductListSerializers, UserSerializers, UserSerializerWithToken
 from rest_framework.generics import ListAPIView, RetrieveAPIView
@@ -51,6 +51,24 @@ class MyTokenObtainPairView(TokenObtainPairView):
 class ProductList(ListAPIView):
     serializer_class = ProductListSerializers
     queryset = Product.objects.all()
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateUserProfile(request):
+    user = request.user 
+    serializers = UserSerializerWithToken(user, many=False)
+    data = request.data
+    user.first_name = data['name']
+    user.username=  data['username']
+    user.email = data['email']
+
+    if data['password'] != '':
+        user.password = make_password(data['password'])
+
+    user.save()
+    
+    return Response(serializers.data) 
 
 
 @api_view(['GET'])
