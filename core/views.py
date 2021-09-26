@@ -1,4 +1,5 @@
 from re import L
+import re
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import serializers
@@ -9,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from .serializers import ProductListSerializers, UserSerializers, UserSerializerWithToken
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .models import Product
+from .models import Product, Order, OrderItem, ShippingAddress
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.hashers import make_password
@@ -114,6 +115,52 @@ class ProductDetail(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
     
+
+@api_view(['POST'])
+@permission_classes(['IsAuthenticated'])
+def addOrderItem(request):
+    user= request.user
+    data = request.data
+    print(data)
+    orderItems = data['orderItems']
+
+    if orderItems and len(orderItems) == 0:
+        return Response({'detail': 'No Order Items'}, status=status.HTTP_400_BAD_REQUEST)   
+    else:
+        order = Order.objects.create(
+            user=user,
+            paymentMethod=data['paymentMethod'],
+            shippingPrice = data['shippingPrice'],
+            totalPrice = data['totalPrice']
+            
+        )
+
+        shipping = ShippingAddress.objects.create(
+            order=order,
+            address = data['shippingAddress']['address'],
+            city = data['shippingAddress']['city'],
+            postalCode = data['shippingAddress']['postelcode'],
+            country = data['shippingAddress']['country'],
+        )
+
+        for i in orderItems:
+            product = Product.objects.get(id=i['product']['id'])
+
+            item = OrderItem.objects.create(
+                product = product,
+                order = order,
+                name = product.name,
+                qty = i['qty'],
+                price = i['product']['price'],
+                image = product.image.url
+
+
+            )
+            product.countInStock -= item.qty 
+            product.save()
+
+
+    return Response("Order")
 
 
 
