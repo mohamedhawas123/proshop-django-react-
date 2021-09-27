@@ -8,7 +8,7 @@ from django.http import JsonResponse, response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
-from .serializers import ProductListSerializers, UserSerializers, UserSerializerWithToken
+from .serializers import ProductListSerializers, OrderSerializer ,UserSerializers, UserSerializerWithToken
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .models import Product, Order, OrderItem, ShippingAddress
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -83,7 +83,7 @@ def getUserProfile(request):
 @api_view(['POST'])
 def registerUser(request):
     data = request.data 
-    print(request)
+    print(data)
     try:
 
         user = User.objects.create(
@@ -117,7 +117,7 @@ class ProductDetail(RetrieveAPIView):
     
 
 @api_view(['POST'])
-@permission_classes(['IsAuthenticated'])
+@permission_classes([IsAuthenticated])
 def addOrderItem(request):
     user= request.user
     data = request.data
@@ -156,11 +156,11 @@ def addOrderItem(request):
 
 
             )
-            product.countInStock -= item.qty 
+            product.countInStock -= int(item.qty) 
             product.save()
 
-
-    return Response("Order")
+    serialzer = OrderSerializer(order).data
+    return Response(serialzer)
 
 
 

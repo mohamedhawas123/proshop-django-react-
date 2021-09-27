@@ -20,7 +20,7 @@ urlpatterns = [
     path("users/register", registerUser, name="register"),
     path("",ProductList.as_view(), name="productList" ),
     path("<pk>/",ProductDetail.as_view(), name="detail" ),
-    path("add/", addOrderItem, name="add_order")
+    path("add/order/", addOrderItem, name="add_order")
 ]
 
 
