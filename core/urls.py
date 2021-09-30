@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from django.urls import path
-from .views import  ProductList, ProductDetail, getUsers, registerUser, addOrderItem
+from .views import  ProductList, ProductDetail, getUsers, getOrderById ,registerUser, addOrderItem
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     
@@ -20,7 +20,8 @@ urlpatterns = [
     path("users/register", registerUser, name="register"),
     path("",ProductList.as_view(), name="productList" ),
     path("<pk>/",ProductDetail.as_view(), name="detail" ),
-    path("add/order/", addOrderItem, name="add_order")
+    path("add/order/", addOrderItem, name="add_order"),
+    path("getorder/<pk>", getOrderById, name="getOrderById")
 ]
 
 
