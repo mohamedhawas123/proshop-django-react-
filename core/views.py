@@ -15,7 +15,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-
+from datetime import datetime
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     # @classmethod
@@ -180,6 +180,20 @@ def getOrderById(request, pk):
     except:
         return Response({'detail': 'order is not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updatedToPaid(request, pk):
+    try:
+
+        order = Order.objects.get(id=pk)
+        order.isPaid = True
+        order.paidAt = datetime.now()
+        order.save()
+        return Response({'detail': 'done'})
+    except:
+        return Response({'message': 'you dont own this order'})
 
 # @api_view(['GET'])
 # def get_products(request): 
